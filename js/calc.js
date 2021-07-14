@@ -34,6 +34,12 @@ const refreshDisplay = () => {
     let [parteInt, parteDec] = sValor.split(',');
     let x = '';
     c = 0;
+
+    if(sValor.length>14){
+        document.querySelector('#display').innerText = 'Not Suported';
+        return;
+    }
+
     for(let i = parteInt.length-1; i>=0; i--){
         if(++c > 3){
             x = '.'+ x;
