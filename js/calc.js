@@ -16,10 +16,12 @@ onload = () => {
     document.querySelector('#bt-minus').onclick = () => operador('-');
     document.querySelector('#bt-plus').onclick = () => operador('+');
     document.querySelector('#bt-equals').onclick = calcula;
+    document.querySelector('#bt-delete').onclick = deletar;
+    document.querySelector('#bt-percent').onclick = () => operador('%');
 
-//tentando usar os botoes do teclado
-    document.addEventListener("keypress", function(e){
-       teclado(e);
+    //tentando usar os botoes do teclado
+    document.addEventListener("keypress", function (e) {
+        teclado(e);
     });
 }
 
@@ -29,49 +31,61 @@ let novoNumero = true;
 let valorAnterior = '0';
 let operacaoPendente = null;
 
+//deletando valor
+const deletar = () => {
+    if (sValor.length == 1) {
+        sValor = '0';
+        refreshDisplay();
+    } else {
+        let len = sValor.length - 1;
+        sValor = sValor.substring(0, len);
+        refreshDisplay();
+    }
+}
+
 //atualiza visor
 const refreshDisplay = () => {
     let [parteInt, parteDec] = sValor.split(',');
     let x = '';
     c = 0;
 
-    if(sValor.length>14){
+    if (sValor.length > 14) {
         document.querySelector('#display').innerText = 'Not Suported';
         return;
     }
 
-    for(let i = parteInt.length-1; i>=0; i--){
-        if(++c > 3){
-            x = '.'+ x;
+    for (let i = parteInt.length - 1; i >= 0; i--) {
+        if (++c > 3) {
+            x = '.' + x;
             c = 1;
         }
         x = parteInt[i] + x;
     }
-     x = x + (parteDec ? ',' + parteDec : '');
+    x = x + (parteDec ? ',' + parteDec : '');
     document.querySelector('#display').innerText = x;
 }
 
 //Tratamento dos valores digitados
-const digito = (n) =>{
-    if(novoNumero){
-        sValor = ''+n;
+const digito = (n) => {
+    if (novoNumero) {
+        sValor = '' + n;
         novoNumero = false;
     }
-    else{
-        sValor += n; 
-    } 
+    else {
+        sValor += n;
+    }
     refreshDisplay();
 };
 
 //Ponto decimal
 const comma = () => {
-    if(novoNumero){
+    if (novoNumero) {
         sValor = '0,';
         novoNumero = false;
-    }else 
-        if(sValor.indexOf(',') == -1) 
+    } else
+        if (sValor.indexOf(',') == -1)
             sValor += ',';
-    
+
     refreshDisplay();
 }
 
@@ -89,19 +103,20 @@ const clear = () => {
 const valorAtual = () => parseFloat(sValor.replace(',', '.'));
 
 const operador = (op) => {
-  calcula();
-  valorAnterior = valorAtual();
-  operacaoPendente = op;
-  novoNumero = true;
+    calcula();
+    valorAnterior = valorAtual();
+    operacaoPendente = op;
+    novoNumero = true;
 }
 
 const calcula = () => {
-    if(operacaoPendente != null){
-        switch(operacaoPendente){
+    if (operacaoPendente != null) {
+        switch (operacaoPendente) {
             case '+': resultado = valorAnterior + valorAtual(); break;
             case '-': resultado = valorAnterior - valorAtual(); break;
             case '/': resultado = valorAnterior / valorAtual(); break;
             case '*': resultado = valorAnterior * valorAtual(); break;
+            case '%': resultado = (valorAnterior / 100) * valorAtual(); break;
         }
         sValor = resultado.toString().replace('.', ',');
     }
@@ -114,7 +129,7 @@ const calcula = () => {
 //teclado
 const teclado = (e) => {
     let btn = null;
-    switch (e.key){
+    switch (e.key) {
         case '1': btn = document.querySelector('#bt-1'); btn.onclick(); break;
         case '2': btn = document.querySelector('#bt-2'); btn.onclick(); break;
         case '3': btn = document.querySelector('#bt-3'); btn.onclick(); break;
